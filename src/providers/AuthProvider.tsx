@@ -7,10 +7,12 @@ import { AppState } from "react-native";
 type AuthContext = {
     session: Session | null;
     user: User | null;
+    profile: any | null;
 };
 const AuthContext = createContext<AuthContext>({
     session: null,
     user: null,
+    profile: null,
 
 });
 AppState.addEventListener('change', (state) => {
@@ -22,7 +24,7 @@ AppState.addEventListener('change', (state) => {
   })
 export default function AuthProvider({ children }: PropsWithChildren) {
     const [session, setSession] = useState<Session | null>(null)
-
+    const [profile, setProfile] = useState<User | null>(null)
     useEffect(() => {
         supabase.auth.getSession().then(({ data: { session } }) => {
             setSession(session)
@@ -32,8 +34,26 @@ export default function AuthProvider({ children }: PropsWithChildren) {
             setSession(session)
         })
     }, [])
+
+    useEffect(() => {
+        if(!session?.user){
+            setProfile(null);
+            return;
+        }
+        const fetchProfile = async () => {
+            let { data, error } = await supabase
+                .from('profiles')
+                .select('*')
+                .eq('id', session?.user?.id)
+                .single();
+            setProfile(data);
+        }
+        fetchProfile();
+    }, [session?.user])
+
+    console.log(profile);
     return (
-        <AuthContext.Provider value={{ session, user: session?.user}}>
+        <AuthContext.Provider value={{ session, user: session?.user, profile}}>
             {children}
         </AuthContext.Provider>
     );
