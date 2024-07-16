@@ -7,6 +7,7 @@ import { useState } from "react";
 import { ActivityIndicator } from "react-native";
 import { useAuth } from "../providers/AuthProvider";
 import { supabase } from "../lib/superbase";
+import { tokenProvider } from "../utils/tokenProvider";
 const client = StreamChat.getInstance(process.env.EXPO_PUBLIC_STREAM_API_KEY);
 
 export default function ChatProvider({children}: PropsWithChildren) {
@@ -17,14 +18,17 @@ export default function ChatProvider({children}: PropsWithChildren) {
             return;
         }
         const connect = async () => {
+            
+            const token = await tokenProvider();
+
             await client.connectUser(
                 {
                   id: profile.id,
                   name: profile.full_name,
                   image: supabase.storage.from('avatars').getPublicUrl(profile.avatar_url).data.publicUrl,
                 },
-                client.devToken(profile.id),
-              );
+                tokenProvider
+            );
             setIsReady(true);
 
             //   const channel = client.channel('messaging', 'the_park', {

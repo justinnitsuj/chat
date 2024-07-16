@@ -51,7 +51,6 @@ export default function AuthProvider({ children }: PropsWithChildren) {
         fetchProfile();
     }, [session?.user])
 
-    console.log(profile);
     return (
         <AuthContext.Provider value={{ session, user: session?.user, profile}}>
             {children}

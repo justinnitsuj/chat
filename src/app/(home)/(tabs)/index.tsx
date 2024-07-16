@@ -1,6 +1,6 @@
 import { Channel, ChannelList, MessageInput, MessageList } from 'stream-chat-expo';
 import React, { useState } from 'react';
-import { Link, router } from 'expo-router';
+import { Link, Redirect, router } from 'expo-router';
 import { useAuth } from '../../../providers/AuthProvider';
 import { Stack } from 'expo-router';
 import { FontAwesome5 } from '@expo/vector-icons';
